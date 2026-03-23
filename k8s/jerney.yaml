@@ -117,7 +117,7 @@ spec:
               memory: 512Mi
           # Security context
           securityContext:
-            allowPrivilegeEscalation: false
+            allowPrivilegeEscalation: false  # Like sudo permission in linux
             readOnlyRootFilesystem: false # Postgres needs write access
             runAsNonRoot: false            # Postgres image runs initdb as root then drops
           livenessProbe:
