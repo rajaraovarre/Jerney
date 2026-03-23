@@ -363,11 +363,13 @@ spec:
       protocol: TCP
 
 ---
-# ---- NetworkPolicy: DB only accepts traffic from Backend ----
+# =========================================================
+# DB POLICY (Ingress + Egress)
+# =========================================================
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: jerney-db-allow-backend-only
+  name: jerney-db-policy
   namespace: jerney
 spec:
   podSelector:
@@ -375,21 +377,30 @@ spec:
       app.kubernetes.io/name: jerney-db
   policyTypes:
     - Ingress
+    - Egress
+
+  # Allow ONLY backend → DB
   ingress:
     - from:
         - podSelector:
             matchLabels:
               app.kubernetes.io/name: jerney-backend
       ports:
-        - port: 5432
-          protocol: TCP
+        - protocol: TCP
+          port: 5432
+
+  # Deny ALL outgoing traffic from DB
+  egress: []
+
 
 ---
-# ---- NetworkPolicy: Backend accepts traffic from Frontend only ----
+# =========================================================
+# BACKEND POLICY (Ingress + Egress)
+# =========================================================
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: jerney-backend-allow-frontend-only
+  name: jerney-backend-policy
   namespace: jerney
 spec:
   podSelector:
@@ -397,12 +408,56 @@ spec:
       app.kubernetes.io/name: jerney-backend
   policyTypes:
     - Ingress
+    - Egress
+
+  # Allow ONLY frontend → backend
   ingress:
     - from:
         - podSelector:
             matchLabels:
               app.kubernetes.io/name: jerney-frontend
       ports:
-        - port: 5000
-          protocol: TCP
-          
+        - protocol: TCP
+          port: 5000
+
+  # Allow ONLY backend → DB
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: jerney-db
+      ports:
+        - protocol: TCP
+          port: 5432
+
+
+---
+# =========================================================
+# FRONTEND POLICY (Ingress + Egress)
+# =========================================================
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: jerney-frontend-policy
+  namespace: jerney
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: jerney-frontend
+  policyTypes:
+    - Ingress
+    - Egress
+
+  # Allow incoming traffic (from anywhere or ingress controller)
+  ingress:
+    - {}   # Allow all ingress (or restrict if using Ingress controller)
+
+  # Allow ONLY frontend → backend
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: jerney-backend
+      ports:
+        - protocol: TCP
+          port: 5000
