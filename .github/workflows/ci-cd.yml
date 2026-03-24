@@ -129,7 +129,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha     #try to reuse old layer(before biolding -- pull previous cache)
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=max # save docker build layers into github cache(hithub remote stoarage)
           # Security: provenance and SBOM
           provenance: true
           sbom: true
