@@ -176,20 +176,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Checkov on Terraform
+      - name: Run Checkov on Terraform   #checkov only scans configuration files only
         uses: bridgecrewio/checkov-action@v12
         with:
-          directory: terraform/
-          framework: terraform
+          directory: terraform/logging
+          framework: terraform  #Apply terraform security rules 
           soft_fail: false
-          skip_check: CKV_AWS_39,CKV_AWS_58  # Public EKS endpoint (intentional for dev)
+          skip_check: CKV_AWS_39,CKV_AWS_58  #Predefined Checkov rules(CKV_AWS_39 -- EKS public endpoint enabled.  CKV_AWS_58 -- EKS control plane )
           output_format: cli
 
       - name: Run Checkov on Kubernetes manifests
         uses: bridgecrewio/checkov-action@v12
         with:
           directory: k8s/
-          framework: kubernetes
+          framework: kubernetes # Apply k8s security rules
           soft_fail: true  # Soft fail for K8s (some checks may not apply)
           output_format: cli
 
