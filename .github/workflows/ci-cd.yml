@@ -55,7 +55,7 @@ jobs:
   # ==============================================================
   # STAGE 2: Software Composition Analysis (SCA) — Dependency Audit
   # ==============================================================
-  sca:
+  sca:                             #This job install dependencies(using cache if available) and checks them against Vulnerability db to detect insecure libraries
     name: "🛡️ Dependency Audit"
     runs-on: ubuntu-latest
     needs: lint
