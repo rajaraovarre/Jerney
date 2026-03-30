@@ -49,7 +49,7 @@ jobs:
 
       - name: Run ESLint
         working-directory: ${{ matrix.component }}
-        run: npm run lint
+        run: npm run lint    #Prepare an environment ---> Install Dependencies(check cacahe first, if cache hit restore from cache, if miss fresh installation) --> validate code quality)
 
   # ==============================================================
   # STAGE 2: Software Composition Analysis (SCA) — Dependency Audit
