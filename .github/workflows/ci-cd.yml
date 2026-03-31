@@ -231,7 +231,7 @@ jobs:
 
       - name: Get short SHA
         id: sha
-        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT  #Current commit ID in short version
 
       - name: Update K8s manifest with new image tags
         run: |
